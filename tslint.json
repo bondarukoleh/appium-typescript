@@ -1,0 +1,37 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-trailing-whitespace": false,
+    "quotemark": [
+      true,
+      "single",
+      "avoid-escape"
+    ],
+    "trailing-comma": [
+      false
+    ],
+    "no-console": [
+      false
+    ],
+    "semicolon": [
+      false,
+      "never"
+    ],
+    "only-arrow-functions": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "space-before-function-paren": false,
+    "no-empty-interface": true,
+    "no-unused-expression": false
+  },
+  "rulesDirectory": [
+    "./specs"
+  ],
+  "linterOptions": {
+    "exclude": ["./node_modules"]
+  }
+}

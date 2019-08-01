@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "build",
+    "rootDir": "./",
+    "target": "es2018",
+    "sourceMap": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "pretty": true,
+    "experimentalDecorators":true,
+    "removeComments": true,
+    "resolveJsonModule": true
+  }
+}

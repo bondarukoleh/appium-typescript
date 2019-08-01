@@ -1,0 +1,39 @@
+{
+  "name": "appium-typescript",
+  "version": "1.0.0",
+  "description": "Test appium project",
+  "scripts": {
+    "test": "mocha",
+    "lint": "tslint -p tsconfig.json",
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bondarukoleh/appium-typescript.git"
+  },
+  "author": "Oleh Bondaruk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bondarukoleh/appium-typescript/issues"
+  },
+  "homepage": "https://github.com/bondarukoleh/appium-typescript#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3",
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "2.2.41",
+    "@types/node": "8.0.24",
+    "allure-commandline": "^2.9.0",
+    "log4js": "^2.6.1",
+    "minimist": "^1.2.0",
+    "mocha-allure-reporter": "^1.4.0",
+    "moment": "^2.22.2",
+    "precommit-hook": "^3.0.0"
+  },
+  "pre-commit": [
+    "lint",
+    "tsc"
+  ]
+}
