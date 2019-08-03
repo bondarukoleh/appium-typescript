@@ -8,7 +8,7 @@ const mocha = new Mocha({
 
 const testDir = path.resolve(__dirname, './specs/base_specs');
 fs.readdirSync(testDir)
-    .filter((file) => path.extname(file) === '.js')
+    .filter((file) => path.basename(file).includes('spec'))
     .forEach((file) => mocha.addFile(path.join(testDir, file)));
 
 mocha.run((failures) => process.exitCode = failures ? 1 : 0);
