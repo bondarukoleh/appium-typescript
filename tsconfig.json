@@ -13,5 +13,10 @@
     "experimentalDecorators":true,
     "removeComments": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": [
+    "main.ts",
+    "specs",
+    "helpers"
+  ]
 }

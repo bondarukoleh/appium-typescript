@@ -5,6 +5,8 @@
   "scripts": {
     "test": "node index.js",
     "lint": "tslint -p tsconfig.json",
+    "clean:build": "node ./clean.js --cleanBuild",
+    "clean:report": "node ./clean.js --cleanReport",
     "tsc": "tsc"
   },
   "repository": {
