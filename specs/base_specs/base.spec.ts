@@ -18,7 +18,7 @@ const opts = {
 describe(`Base suite`, function () {
   let driver = null
 
-  it(`Base it 1`, async function () {
+  it(`First it`, async function () {
     const textToInput = 'This is text.'
     driver = wd.promiseChainRemote(localAppium)
     await driver.init(opts)
