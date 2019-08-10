@@ -28,9 +28,6 @@
     "no-empty-interface": true,
     "no-unused-expression": false
   },
-  "rulesDirectory": [
-    "./specs"
-  ],
   "linterOptions": {
     "exclude": ["./node_modules"]
   }

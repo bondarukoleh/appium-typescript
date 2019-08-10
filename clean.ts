@@ -1,7 +1,8 @@
-const ENV_ARGS = require('minimist')(process.argv.slice(2));
-const fs = require('fs');
-const path = require('path');
+import * as minimist from 'minimist';
+import * as fs from 'fs';
+import * as path from 'path';
 
+const ENV_ARGS = minimist(process.argv.slice(2));
 const compiledFolder = path.resolve(__dirname, './build');
 const reportFolder = path.resolve(__dirname, './allure-report');
 const resultsFolder = path.resolve(__dirname, './allure-results');
@@ -17,7 +18,7 @@ if (ENV_ARGS.cleanReport) {
 
 function removeDirectory(directoryPath) {
   if (fs.existsSync(directoryPath)) {
-    fs.readdirSync(directoryPath).forEach(innerValue => {
+    fs.readdirSync(directoryPath).forEach((innerValue) => {
       const innerPath = path.join(directoryPath, innerValue);
       if (fs.statSync(innerPath).isFile()) {
         fs.unlinkSync(innerPath)
