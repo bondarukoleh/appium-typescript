@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Test appium project",
   "scripts": {
-    "test": "node index.js",
+    "test": "ts-node main.ts",
     "lint": "tslint -p tsconfig.json",
     "clean:build": "ts-node clean.ts --cleanBuild",
     "clean:report": "ts-node clean.ts --cleanReport",
+    "start:appium": "appium",
     "tsc": "tsc",
     "watchTsChanges": "tsc -w",
     "validate": "npm ls"
@@ -26,6 +27,7 @@
     "@types/mocha": "2.2.41",
     "@types/node": "8.0.24",
     "allure-commandline": "^2.9.0",
+    "appium": "^1.14.1",
     "chai": "^4.2.0",
     "log4js": "^2.6.1",
     "minimist": "^1.2.0",
@@ -35,7 +37,8 @@
     "precommit-hook": "^3.0.0",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "wd": "^1.11.3"
   },
   "pre-commit": [
     "lint",
