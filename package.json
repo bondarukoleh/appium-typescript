@@ -9,8 +9,7 @@
     "clean:report": "ts-node clean.ts --cleanReport",
     "start:appium": "appium",
     "tsc": "tsc",
-    "watchTsChanges": "tsc -w",
-    "validate": "npm ls"
+    "watchTsChanges": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -27,7 +26,7 @@
     "@types/mocha": "2.2.41",
     "@types/node": "8.0.24",
     "allure-commandline": "^2.9.0",
-    "appium": "^1.14.1",
+    "appium": "1.9.1",
     "chai": "^4.2.0",
     "log4js": "^2.6.1",
     "minimist": "^1.2.0",

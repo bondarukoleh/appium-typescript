@@ -1,3 +1,7 @@
-import {MainPage} from './main.page'
+import {MainPage} from './functional_app'
 
-export {MainPage}
+const functionalApp = {
+  mainPage: new MainPage()
+}
+
+export {functionalApp}

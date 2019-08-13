@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const mocha = new Mocha({
-  timeout: 30000
+  timeout: 60000
 });
 
 const testDir = path.resolve(__dirname, './specs/base_specs');
