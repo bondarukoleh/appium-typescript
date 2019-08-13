@@ -1,5 +1,1 @@
-import {ElementFinder} from './element.finder'
-
-export {
-  ElementFinder
-}
+export {ElementFinder, IElementFinder} from './element.finder'

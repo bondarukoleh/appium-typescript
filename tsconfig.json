@@ -6,8 +6,7 @@
     "target": "es2018",
     "sourceMap": true,
     "lib": [
-      "es2018",
-      "dom"
+      "es2018"
     ],
     "pretty": true,
     "experimentalDecorators":true,

@@ -26,7 +26,8 @@
     "ordered-imports": false,
     "space-before-function-paren": false,
     "no-empty-interface": true,
-    "no-unused-expression": false
+    "no-unused-expression": false,
+    "member-ordering": false
   },
   "linterOptions": {
     "exclude": ["./node_modules"]
