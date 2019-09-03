@@ -1,7 +1,7 @@
 import * as Mocha from 'mocha'
 import * as fs from 'fs'
 import * as path from 'path'
-import {runProcess} from './lib/retrier'
+import {runProcess} from './lib/retrier/draft'
 import {fail} from 'assert'
 
 const mocha = new Mocha({
@@ -39,4 +39,4 @@ async function run() {
     }
   }
 }
-run()
+// run()
