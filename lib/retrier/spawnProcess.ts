@@ -1,6 +1,16 @@
 import {spawn} from 'child_process'
+import {ICommandObject} from './retrier'
 
-function buildSpawnCommand(failedByAssertCommands, spawnOptions) {
+type ISpawnProcess = (cmdObject: ICommandObject, attemptNumber: number) => Promise<ICommandObject[]> | Promise<null>
+
+interface ISpawnOptions {
+  checkStackForSpecificFail?: () => boolean,
+  reformatCommand: (cmdObject: ICommandObject, executionStack: any) => ICommandObject[],
+  longestProcessTime?: number,
+  debugProcess?: boolean,
+}
+
+function buildSpawnCommand(uniqFailedByAssertCommands: ICommandObject[], spawnOptions): ISpawnProcess {
   const {
     longestProcessTime,
     debugProcess,
@@ -8,19 +18,19 @@ function buildSpawnCommand(failedByAssertCommands, spawnOptions) {
     checkStackForSpecificFail
   } = spawnOptions
 
-  return (cmdObject, attemptNumber) => new Promise(function(resolve) {
+  return (cmdObject: ICommandObject, attemptNumber) => new Promise(function(resolve) {
+    console.log('YOoooooooo')
+    console.log('command %j', cmdObject)
     let executionStack = ''
-    const originalCmd = cmdObject.cmd
-
     const start = Date.now()
 
     if (debugProcess) {
       console.log(`Command to run: %j`, cmdObject.command)
-      console.log(`With arguments: %j`, cmdObject.args)
+      console.log(`With arguments: %j`, cmdObject.arguments)
       console.log(`Attempt to run it: ${attemptNumber}`)
     }
 
-    const process = spawn(cmdObject.command, cmdObject.args, {shell: true})
+    const process = spawn(cmdObject.command, cmdObject.arguments, {shell: true})
 
     const executionTimeWatcher = setInterval(() => {
       // Fill process that running too long
@@ -49,19 +59,21 @@ function buildSpawnCommand(failedByAssertCommands, spawnOptions) {
 
       if (exitCode === 0) {
         // process was succeeded, exit
-        resolve(true)
-        return
+        return resolve(null)
       }
 
       if (exitCode !== 0 && executionStack && checkStackForSpecificFail(executionStack)) {
         failedNotByAssertCommand = cmdObject
-      } else if (exitCode !== 0 && executionStack && reformatCommand(executionStack)) {
+        debugProcess && console.log(`We have error not connected to test in: ${cmdObject}`)
+        // maybe we should return here, to discuss
+      }
+      if (exitCode !== 0 && executionStack && reformatCommand) {
         failedNotByAssertCommand = reformatCommand(cmdObject, executionStack)
       } else {
-        failedByAssertCommands.push(cmdObject)
+        uniqFailedByAssertCommands.push(cmdObject)
       }
 
-      resolve(failedNotByAssertCommand)
+      return resolve(Array.isArray(failedNotByAssertCommand) ? failedNotByAssertCommand : [failedNotByAssertCommand])
     })
   })
 }

@@ -1,13 +1,35 @@
 import {buildSpawnCommand} from './spawnProcess'
 import {sleep, getSpecsFilesPath} from './utils'
 
-function buildRetrier(retrierOptions) {
-  const failedByAssertCommands = []
+interface IBuildRetrier {
+  maxSessionCount?: number,
+  checkStackForSpecificFail?: () => boolean,
+  afterAttemptCallback?: () => any,
+  reformatCommand: (cmdObject: ICommandObject, executionStack: any) => ICommandObject[],
+  longestProcessTime?: number, // thirty minutes
+  debugProcess?: boolean,
+  pollTime?: number,
+  attemptsCount?: number
+}
+
+type IBuildRetrierReturns = (commandsArray: ICommandObject[]) => Promise<{
+    failedCommandsAfterAllAttempts: ICommandObject[],
+    uniqFailedByAssertCommands: ICommandObject[]
+  }>
+
+export interface ICommandObject {
+  command: string,
+  arguments: string[]
+}
+
+function buildRetrier(retrierOptions: IBuildRetrier): IBuildRetrierReturns {
+  const uniqFailedByAssertCommands = []
   let currentSessionCount = 0
   // should be let not const
-  let {attemptsCount = 2, maxSessionCount = 10} = retrierOptions
+  let {attemptsCount = 2} = retrierOptions
   const {
-    checkStackForSpecificFail,
+    maxSessionCount = 10,
+    checkStackForSpecificFail = () => false,
     afterAttemptCallback,
     reformatCommand,
     longestProcessTime = 30 * 60 * 1000, // thirty minutes
@@ -15,7 +37,7 @@ function buildRetrier(retrierOptions) {
     pollTime = 5000,
   } = retrierOptions
 
-  const spawnProcess = buildSpawnCommand(failedByAssertCommands,
+  const spawnProcess = buildSpawnCommand(uniqFailedByAssertCommands,
     {
       longestProcessTime,
       debugProcess,
@@ -23,29 +45,33 @@ function buildRetrier(retrierOptions) {
       checkStackForSpecificFail
     })
 
-  async function retrier(commandsArray) {
+  async function retrier(commandsArray: ICommandObject[]): Promise<{
+    failedCommandsAfterAllAttempts: ICommandObject[],
+    uniqFailedByAssertCommands: ICommandObject[]
+  }> {
     if (debugProcess) {
       console.log(`Attempts count is: ${attemptsCount}`)
     }
     const attemptsArray = new Array(attemptsCount).fill(1) // not magic, just to have index, and no undefined
 
-    async function runCommand(commandsToRun, failedCommands, attemptNumber) {
+    async function runCommand(commandsToRun, uniqForAttemptFailedCommandsArray, attemptNumber) {
       if (maxSessionCount > currentSessionCount && commandsToRun.length) {
         currentSessionCount++
-        const failed = await spawnProcess(commandsArray.pop(), attemptNumber)
-        if (failed) {
-          failedCommands.push(failed)
+        const failed = await spawnProcess(commandsToRun.pop(), attemptNumber)
+        if (!!failed) {
+          uniqForAttemptFailedCommandsArray.push(...failed)
         }
         currentSessionCount--
       }
     }
 
-    async function runCommandsArray(commandsToRun, failedCommands, attemptNumber) {
-      const pushToExecution = setInterval(() => runCommand(commandsToRun, failedCommands, attemptNumber), pollTime)
+    async function runCommandsArray(commandsToRun, uniqForAttemptFailedCommandsArray, attemptNumber) {
+      const pushToExecution = setInterval(() => runCommand(commandsToRun, uniqForAttemptFailedCommandsArray,
+        attemptNumber), pollTime)
 
       do {
         if (commandsToRun.length) {
-          await runCommand(commandsToRun, failedCommands, attemptNumber)
+          await runCommand(commandsToRun, uniqForAttemptFailedCommandsArray, attemptNumber)
         }
         if (currentSessionCount) {
           await sleep(2000)
@@ -54,34 +80,36 @@ function buildRetrier(retrierOptions) {
 
       if (afterAttemptCallback && typeof afterAttemptCallback === 'function') {
         if (Object.prototype.toString.call(afterAttemptCallback) === '[object AsyncFunction]') {
-          await afterAttemptCallback()
+          try {await afterAttemptCallback()} catch (e) {
+            debugProcess && console.log('ERROR IN afterAttemptCallback')
+            console.error(e)
+          }
         } else {
           afterAttemptCallback()
         }
       }
 
       clearInterval(pushToExecution)
-      return failedCommands
+      return uniqForAttemptFailedCommandsArray
     }
 
     // main action here
-    const failedCommandsAfterAllAttempts = await attemptsArray.reduce((resolver, current, attemptNumber) => {
+    const failedCommandsAfterAllAttempts = await attemptsArray.reduce(
+      (resolver, current, attemptNumber) => {
       return resolver.then((commandsToRun) => {
         return runCommandsArray(commandsToRun, [], attemptNumber)
-          .then((attemptFailedCommands) => attemptFailedCommands)
-      }, Promise.resolve(commandsArray))
-    })
-
-    const combinedFails = [...failedCommandsAfterAllAttempts, ...failedByAssertCommands]
-    if (combinedFails.length) {
-      console.log(`We got failed commands: ${combinedFails}`)
-    }
+          .then((uniqForAttemptFailedCommandsArray) => {
+            return uniqForAttemptFailedCommandsArray
+          })
+      })
+    }, Promise.resolve(commandsArray))
 
     return {
       failedCommandsAfterAllAttempts,
-      failedByAssertCommands
+      uniqFailedByAssertCommands
     }
   }
+
   return retrier
 }
 
