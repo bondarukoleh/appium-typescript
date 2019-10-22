@@ -17,7 +17,6 @@ const opts = {
   automationName: 'UiAutomator2',
 };
 
-
 describe(`Base suite`, function () {
   let driver = null;
 
@@ -29,13 +28,9 @@ describe(`Base suite`, function () {
     // expect(text).to.eq(textToInput, `"${text}" value should be equal ${textToInput}`)
     driver = await Driver.getInstance({appiumServer: localAppium, deviceCapabilities: opts})
     await driver.element('accessibility id', 'buttonStartWebviewCD').click()
-    await (async () => new Promise((res) => setTimeout(res, 3000)))()
     await driver.element('id', 'io.selendroid.testapp:id/spinner_webdriver_test_data').click()
-    await (async () => new Promise((res) => setTimeout(res, 3000)))()
     await driver.element('xpath', `//*[@text = 'iframes']`).click()
-    await (async () => new Promise((res) => setTimeout(res, 3000)))()
     await driver.element('xpath', `//*[@text = 'Foo']`).click()
-    await (async () => new Promise((res) => setTimeout(res, 3000)))()
   })
 
   after(async function () {
