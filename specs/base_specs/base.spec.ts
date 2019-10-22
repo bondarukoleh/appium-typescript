@@ -9,10 +9,10 @@ const localAppium = {
 
 const opts = {
   platformName: 'Android',
-  // platformVersion: '8.1',
-  platformVersion: '8.0',
-  // deviceName: 'Samsung Galaxy S9',
-  deviceName: 'Nexus_5X_26_emul',
+  platformVersion: '8.1',
+  // platformVersion: '8.0',
+  deviceName: 'Samsung Galaxy S9',
+  // deviceName: 'Nexus_5X_26_emul',
   app: path.resolve(__dirname, '../../apps/functional-app.apk'),
   automationName: 'UiAutomator2',
 };
@@ -27,13 +27,20 @@ describe(`Base suite`, function () {
     // const text = await elem.text()
     // expect(text).to.eq(textToInput, `"${text}" value should be equal ${textToInput}`)
     driver = await Driver.getInstance({appiumServer: localAppium, deviceCapabilities: opts})
+    console.log('DATA FROM TEST')
     await driver.element('accessibility id', 'buttonStartWebviewCD').click()
     await driver.element('id', 'io.selendroid.testapp:id/spinner_webdriver_test_data').click()
     await driver.element('xpath', `//*[@text = 'iframes']`).click()
     await driver.element('xpath', `//*[@text = 'Foo']`).click()
   })
 
-  after(async function () {
-    await driver.quit()
+  it(`Second it`, async function () {
+    console.log('Failed by assert')
+    expect(false).to.eq(true)
+  })
+
+  it(`Third it`, async function () {
+    console.log('Failed by exception')
+    throw new Error('FAILED_IT:$$Third it$$')
   })
 })

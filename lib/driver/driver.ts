@@ -24,15 +24,27 @@ class Driver {
   private constructor() {
   }
 
-  public static async getInstance({appiumServer, deviceCapabilities}: IDriverInitialization = null): Promise<any> {
+  public static async getInstance({appiumServer, deviceCapabilities}: IDriverInitialization = {} as any): Promise<any> {
     if (Driver.driver === null) {
       Driver.driver = wd.promiseChainRemote(appiumServer)
       await Driver.driver.init(deviceCapabilities)
       return Driver.driver
-    } else if (arguments.length) {
-      throw Error(`You are trying to initialize singletone once more, with ${arguments}`)
     }
     return Driver.driver
+  }
+
+  public static async quit(): Promise<any> {
+    if (Driver.driver === null) {
+      console.log('NOTING TO QUITE')
+      return true
+    }
+    try {
+      await Driver.driver.quit()
+      Driver.driver = null
+    } catch (e) {
+      console.log(`COULDN'T STOP DRIVER`)
+      console.log(e)
+    }
   }
 }
 
